@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LangGraph Demo</title>
+  <meta name="description" content="Visual demo of LangGraph's core ideas: state with reducers, super-steps, checkpoints, Command, Send and interrupt." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="stage">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" data-icon="workflow" data-keep data-size="20"></span>
+        <div>
+          <h1>LangGraph Demo</h1>
+          <p>como o runtime roda um grafo, passo a passo</p>
+        </div>
+      </div>
+      <ol class="chapters" aria-label="Capítulos">
+        <li class="chapter"><span>1</span>Command</li>
+        <li class="chapter pink"><span>2</span>interrupt</li>
+        <li class="chapter"><span>3</span>Send</li>
+        <li class="chapter red"><span>4</span>sem reducer</li>
+      </ol>
+      <button class="btn primary" id="start-btn"><span data-icon="play"></span>Iniciar simulação</button>
+    </header>
+
+    <main class="layout">
+      <section class="panel graph-panel" aria-label="Grafo">
+        <div class="panel-head">
+          <span data-icon="workflow"></span>StateGraph
+          <span class="superstep" id="superstep">parado</span>
+          <span class="thread-chip" title="Cada conversa é uma thread no checkpointer"><span class="dot"></span>thread_id <b id="thread-id">ana/1</b></span>
+        </div>
+        <div class="restored" id="restored" hidden><span data-icon="database"></span><span id="restored-text"></span></div>
+        <div class="restored warn" id="crash-warn" hidden><span data-icon="power"></span><span>simulando queda do servidor…</span></div>
+        <svg class="graph" id="graph" role="img" aria-label="Grafo: usuário, START, triage, support, catalog, confirm e END"></svg>
+        <div class="legend"><i class="lg-fixed"></i>aresta fixa <i class="lg-dyn"></i>decidida em runtime <i class="lg-human"></i>humano</div>
+      </section>
+
+      <section class="panel state" aria-label="Estado">
+        <div class="panel-head"><span data-icon="layers"></span>Estado <span class="state-next" id="state-next"></span></div>
+        <div class="travel-banner" id="travel-banner" hidden>
+          <span data-icon="history"></span><span id="travel-text"></span>
+          <button class="link" id="travel-back">voltar</button>
+        </div>
+        <div class="state-body" id="state-body"></div>
+      </section>
+
+      <section class="panel tape-panel" aria-label="Checkpoints">
+        <div class="panel-head"><span data-icon="database"></span>Checkpoints <span class="count" id="tape-count">0</span>
+          <span class="tape-hint">um por super-step · clique para ver o estado daquele momento</span></div>
+        <div class="tape" id="tape"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="crash-shade" id="crash-shade" hidden>
+    <div class="crash-box">
+      <span class="crash-icon" data-icon="power" data-keep data-size="44"></span>
+      <b>Servidor reiniciando</b>
+      <p class="crash-sub">Simulação: o processo do Service Desk caiu com o grafo pausado.</p>
+      <ul class="crash-steps" id="crash-steps"></ul>
+      <div class="crash-bar" id="crash-bar" hidden><i></i></div>
+    </div>
+  </div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/icons.js"></script>
+  <script src="js/desk.js"></script>
+  <script src="js/view.js"></script>
+  <script>
+    document.querySelectorAll("[data-icon]").forEach((el) => {
+      const svg = LG.icon(el.dataset.icon, Number(el.dataset.size) || 16);
+      if (el.hasAttribute("data-keep")) el.innerHTML = svg; // keep the styled wrapper
+      else el.outerHTML = svg;
+    });
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>
